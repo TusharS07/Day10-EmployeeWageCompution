@@ -1,6 +1,10 @@
 package com.Bridgelabz.Day10EmployeeWageCompution;
 
-public class EmployeeWageCompution {
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
+public class EmployeeWageCompution { //main class
     public final String company;
     public final int empPerHrWage;
     public int numOFWorkingDays;
@@ -25,46 +29,72 @@ public class EmployeeWageCompution {
 
 
     public static void main(String[] args) {
-        EmpWageBuilder empWage = new EmpWageBuilder();
-        empWage.addCompanyEmpWage("TCS", 60, 10, 70);
-        empWage.addCompanyEmpWage("Capgemini", 80, 20, 100);
-        empWage.addCompanyEmpWage("DXC", 50, 8, 55);
-        empWage.addCompanyEmpWage("Flipkart", 100, 20, 60);
-        empWage.empWageCompute();
+        IEmployeeWageCompution empWageBuilder = new EmpWageBuilder();
+        empWageBuilder.addCompanyEmpWage("TCS", 60, 10, 70);
+        empWageBuilder.addCompanyEmpWage("Capgemini", 80, 20, 100);
+        empWageBuilder.addCompanyEmpWage("DXC", 50, 8, 55);
+        empWageBuilder.addCompanyEmpWage("Flipkart", 100, 20, 60);
+        empWageBuilder.empWageCompute();
         System.out.println();
+        System.out.println("Total wage For TCS Company: " +empWageBuilder.getTotalWage("TCS"));
+        System.out.println();
+        System.out.println("Total wage For Capgemini Company: " +empWageBuilder.getTotalWage("Capgemini"));
+        System.out.println();
+        System.out.println("Total wage For DXC Company: " +empWageBuilder.getTotalWage("DXC"));
+        System.out.println();
+        System.out.println("Total wage For Flipkart Company: " +empWageBuilder.getTotalWage("Flipkart"));
+        System.out.println();
+
+    }
+
+
+
+    //create interface classs
+    public interface IEmployeeWageCompution {
+        public void addCompanyEmpWage(String company, int empPerHrWage, int numOFWorkingDays, int totalHourPerMonth);
+        public void empWageCompute();
+        public int getTotalWage(String company);
     }
 
 
     //emp wage for companys
 
 
-    public static class EmpWageBuilder {
+    public static class EmpWageBuilder implements IEmployeeWageCompution {
 
-        public final int FULL_TIME = 1;
-        public final int PART_TIME = 2;
+        public static final int FULL_TIME = 1;
+        public static final int PART_TIME = 2;
 
         private int numofCompanys = 0;
-        private EmployeeWageCompution[] employeeWageComputionArray;
+        private LinkedList<EmployeeWageCompution> employeeWageComputionsList;
+        private Map<String,EmployeeWageCompution> employeeWageComputionMap;
 
         public EmpWageBuilder() {
-            employeeWageComputionArray = new EmployeeWageCompution[5];
+            employeeWageComputionsList = new LinkedList<>();
+            employeeWageComputionMap = new HashMap<>();
         }
 
-        private void addCompanyEmpWage(String company, int empPerHrWage, int numOFWorkingDays, int totalHourPerMonth) {
-            employeeWageComputionArray[numofCompanys] = new EmployeeWageCompution(company, empPerHrWage, numOFWorkingDays, totalHourPerMonth);
-            numofCompanys++;
+        public void addCompanyEmpWage(String company, int empPerHrWage, int numOFWorkingDays, int totalHourPerMonth) {
+            EmployeeWageCompution employeeWageCompution  = new EmployeeWageCompution(company, empPerHrWage, numOFWorkingDays, totalHourPerMonth);
+            employeeWageComputionsList.add(employeeWageCompution);
+            employeeWageComputionMap.put(company,employeeWageCompution);
         }
 
-        private void empWageCompute() {
-            for (int i = 0; i < numofCompanys; i++) {
-                employeeWageComputionArray[i].setTotalEmpWage(this.empWageCompute(employeeWageComputionArray[i]));
-                System.out.println(employeeWageComputionArray[i]);
+        public void empWageCompute() {
+            for (int i = 0; i < employeeWageComputionsList.size(); i++) {
+                EmployeeWageCompution employeeWageCompution = employeeWageComputionsList.get(i);
+                employeeWageCompution.setTotalEmpWage(this.empWageCompute(employeeWageCompution));
+                System.out.println(employeeWageCompution);
             }
 
         }
 
+        public int getTotalWage(String company) {
+            return employeeWageComputionMap.get(company).totalEmpWage;
+        }
 
-        private int empWageCompute(EmployeeWageCompution employeeWageCompution) {
+
+        public int empWageCompute(EmployeeWageCompution employeeWageCompution) {
             int empHour = 0;
             int totalEmpHrs = 0;
             int totalWorkingDays = 0;
