@@ -4,7 +4,7 @@ public class EmployeeWageCompution {
     public final int FULL_TIME = 1;
     public final int PART_TIME = 2;
 
-
+    //emp wage for companys
     public static void main(String[] args) {
         EmpWageForComany tcs = new EmpWageForComany("TCS",40,20,60);
         EmpWageForComany capgemini = new EmpWageForComany("Capgemini",60,15,55);
